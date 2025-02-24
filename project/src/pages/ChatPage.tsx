@@ -66,7 +66,7 @@ function ChatPage() {
   return (
     <div className="h-full flex flex-col bg-gray-900">
       {/* Main Content */}
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 mt-20">
         {messages.length === 0 ? (
           <div className="h-full flex items-center justify-center text-gray-400">
             <div className="text-center">
