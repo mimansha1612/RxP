@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
 import Header from './components/Header';
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 
 function App() {

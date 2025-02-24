@@ -7,7 +7,7 @@ interface HeaderProps {
 
 function Header({ onNewChat, onHome }: HeaderProps) {
   return (
-    <header className="bg-gray-900 border-b border-gray-800">
+    <header className="absolute w-full z-10 bg-gray-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
