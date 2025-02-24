@@ -2,11 +2,20 @@
 import { Boxes } from "../components/ui/background-boxes";
 import { ArrowRight } from 'lucide-react';
 
+import { useAuth } from "@clerk/clerk-react";
+import { Navigate } from "react-router-dom";
+
+
 interface HomePageProps {
   onStartChat: () => void;
 }
 
 function HomePage({ onStartChat }: HomePageProps) {
+  const { isSignedIn } = useAuth();
+
+  if (isSignedIn) {
+    return <Navigate to="/chat" replace />;
+  }
   return (
     <div className="overflow-hidden bg-[url('/public/bg.jpg')] bg-cover">
     <Boxes />

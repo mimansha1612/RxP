@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Stethoscope, Send, Mic, Upload, X, FileText } from 'lucide-react';
 
+
 interface Message {
   content: string;
   type: 'user' | 'assistant';
