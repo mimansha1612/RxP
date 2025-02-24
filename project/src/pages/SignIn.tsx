@@ -10,7 +10,7 @@ const SignInPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-screen bg-[url('/public/bg.jpg')] bg-cover">
       <SignIn/>
     </div>
   );
