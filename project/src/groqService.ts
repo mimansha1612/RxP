@@ -1,4 +1,3 @@
-// groqService.ts
 import Groq from 'groq-sdk';
 
 const groq = new Groq({
@@ -6,10 +5,10 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true, // Allow usage in the browser
 });
 
-export async function getGroqChatCompletion(userMessage: string) {
+export async function getGroqChatCompletion(chatHistory: { role: 'user' | 'assistant'; content: string }[]) {
   try {
     const response = await groq.chat.completions.create({
-      messages: [{ role: 'user', content: userMessage }],
+      messages: chatHistory,
       model: 'llama-3.3-70b-versatile',
     });
 
