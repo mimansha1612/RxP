@@ -17,7 +17,7 @@ function Header({ onNewChat, onHome }: HeaderProps) {
               className="flex items-center gap-2 hover:text-blue-400 transition-colors"
             >
               <Stethoscope className="w-8 h-8 text-blue-500" />
-              <span className="text-xl font-bold">RO.AI</span>
+              <span className="text-xl font-bold">RPM.AI</span>
             </button>
 
             <nav className="hidden md:flex ml-10 space-x-4">

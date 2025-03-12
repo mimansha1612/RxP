@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Stethoscope, Send, Mic, Upload, X, FileText } from 'lucide-react';
+import { Stethoscope, Send, Upload, X, FileText } from 'lucide-react';
+import { getGroqChatCompletion } from '../groqService';
+import * as pdfjsLib from 'pdfjs-dist';
 
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface Message {
   content: string;
@@ -19,9 +23,18 @@ function ChatPage() {
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() && attachments.length === 0) return;
+
+    // Extract text from PDFs
+    let pdfText = '';
+    for (const file of attachments) {
+      if (file.type === 'application/pdf') {
+        const text = await extractTextFromPDF(file);
+        pdfText += `\n\n[PDF Content: ${file.name}]\n${text}`;
+      }
+    }
 
     const newMessage: Message = {
       content: inputValue,
@@ -34,18 +47,31 @@ function ChatPage() {
       }))
     };
 
-    // Simulate AI response
-    const aiResponse: Message = {
-      content: attachments.length > 0
-        ? `I've received your documents${inputValue ? ' and question' : ''}. Let me analyze them and provide assistance with your medical studies.`
-        : "I understand your medical query. As an AI assistant, I'm here to help medical students with their studies and clinical knowledge. What specific topic would you like to explore?",
-      type: 'assistant',
-      timestamp: new Date()
-    };
-
-    setMessages([...messages, newMessage, aiResponse]);
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     setInputValue('');
     setAttachments([]);
+
+    try {
+      // Combine user's question and PDF text
+      const combinedMessage = inputValue + (pdfText ? `\n\n${pdfText}` : '');
+      const aiResponseContent = await getGroqChatCompletion(combinedMessage);
+
+      const aiResponse: Message = {
+        content: aiResponseContent,
+        type: 'assistant',
+        timestamp: new Date()
+      };
+
+      setMessages(prevMessages => [...prevMessages, aiResponse]);
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+      const errorResponse: Message = {
+        content: 'Error: Unable to connect to the AI model.',
+        type: 'assistant',
+        timestamp: new Date()
+      };
+      setMessages(prevMessages => [...prevMessages, errorResponse]);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +89,20 @@ function ChatPage() {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+    let text = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map((item: any) => item.str).join(' ');
+    }
+
+    return text;
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-900">
       {/* Main Content */}
@@ -71,7 +111,7 @@ function ChatPage() {
           <div className="h-full flex items-center justify-center text-gray-400">
             <div className="text-center">
               <p className="text-lg mb-4">Start a conversation by asking a medical question...</p>
-              <p className="text-sm">You can also upload documents for analysis</p>
+              <p className="text-sm">You can also upload documents (PDFs) for analysis</p>
             </div>
           </div>
         ) : (
@@ -156,12 +196,6 @@ function ChatPage() {
               className="p-2 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-gray-200"
             >
               <Upload size={20} />
-            </button>
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-gray-200"
-            >
-              <Mic size={20} />
             </button>
             <button
               type="submit"
