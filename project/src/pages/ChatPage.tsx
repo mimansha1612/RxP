@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Stethoscope, Send } from 'lucide-react';
+import ReactMarkdown from 'react-markdown'; // Import react-markdown
 import { getGroqChatCompletion } from '../groqService';
 
 interface Message {
-  role: 'user' | 'assistant'; // Updated to match Groq API's expected role format
+  role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
 }
@@ -101,7 +102,10 @@ function ChatPage() {
                 )}
               </div>
               <div className="flex-1">
-                <p className="text-gray-300">{message.content}</p>
+                {/* Render Markdown content */}
+                <ReactMarkdown>
+                  {message.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))
