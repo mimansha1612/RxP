@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Stethoscope, Send, Mic } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import { getGroqChatCompletion } from '../groqService';
+import React, { useState, useEffect, useRef } from "react";
+import { Send, Mic } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { getGroqChatCompletion } from "../groqService";
+import logo from "../../public/Screenshot_2025-03-12_175925-removebg-preview.png";
+import { SignedIn, UserButton } from "@clerk/clerk-react";
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
 
 function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -24,22 +26,22 @@ function ChatPage() {
       const recognition = new SpeechRecognition();
       recognition.continuous = false; // Stop after one sentence
       recognition.interimResults = false; // Only final results
-      recognition.lang = 'en-US'; // Set language
+      recognition.lang = "en-US"; // Set language
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        setInputValue((prev) => prev + ' ' + transcript); // Append recognized text to input
+        setInputValue((prev) => prev + " " + transcript); // Append recognized text to input
         setIsListening(false); // Stop listening after speech is recognized
       };
 
       recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
+        console.error("Speech recognition error:", event.error);
         setIsListening(false);
       };
 
       recognitionRef.current = recognition;
     } else {
-      console.warn('Speech recognition not supported in this browser.');
+      console.warn("Speech recognition not supported in this browser.");
     }
   }, []);
 
@@ -62,10 +64,10 @@ function ChatPage() {
       setMessages([]);
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -75,14 +77,14 @@ function ChatPage() {
 
     // Add the user's message to the chat history
     const newUserMessage: Message = {
-      role: 'user',
+      role: "user",
       content: inputValue,
       timestamp: new Date(),
     };
 
     // Update the chat history with the user's message
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
-    setInputValue('');
+    setInputValue("");
 
     try {
       // Prepare the chat history for the Groq API
@@ -92,24 +94,24 @@ function ChatPage() {
       }));
 
       // Add the user's new message to the chat history
-      chatHistory.push({ role: 'user', content: inputValue });
+      chatHistory.push({ role: "user", content: inputValue });
 
       // Send the entire chat history to the Groq API
       const aiResponseContent = await getGroqChatCompletion(chatHistory);
 
       // Add the AI's response to the chat history
       const aiResponse: Message = {
-        role: 'assistant',
+        role: "assistant",
         content: aiResponseContent,
         timestamp: new Date(),
       };
 
       setMessages((prevMessages) => [...prevMessages, aiResponse]);
     } catch (error) {
-      console.error('Error fetching AI response:', error);
+      console.error("Error fetching AI response:", error);
       const errorResponse: Message = {
-        role: 'assistant',
-        content: 'Error: Unable to connect to the AI model.',
+        role: "assistant",
+        content: "Error: Unable to connect to the AI model.",
         timestamp: new Date(),
       };
       setMessages((prevMessages) => [...prevMessages, errorResponse]);
@@ -123,7 +125,9 @@ function ChatPage() {
         {messages.length === 0 ? (
           <div className="h-full flex items-center justify-center text-gray-400">
             <div className="text-center">
-              <p className="text-lg mb-4">Start a conversation by asking a medical question...</p>
+              <p className="text-lg mb-4">
+                Start a conversation by asking a medical question...
+              </p>
             </div>
           </div>
         ) : (
@@ -131,25 +135,27 @@ function ChatPage() {
             <div
               key={index}
               className={`flex gap-4 mb-4 p-4 ${
-                message.role === 'assistant' ? 'bg-gray-800 rounded-lg' : ''
+                message.role === "assistant" ? "bg-gray-800 rounded-lg" : ""
               }`}
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  message.role === 'assistant' ? 'bg-blue-500' : 'bg-gray-600'
+                  message.role === "assistant" ? "bg-slate-100" : "bg-gray-600"
                 }`}
               >
-                {message.role === 'assistant' ? (
-                  <Stethoscope size={16} />
+                {message.role === "assistant" ? (
+                  <img src={logo} alt="Assistant" className="w-6 h-6" />
                 ) : (
-                  <div className="w-4 h-4 bg-gray-300 rounded-full" />
+                  <div className="flex items-center justify-center">
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                  </div>
                 )}
               </div>
               <div className="flex-1">
                 {/* Render Markdown content */}
-                <ReactMarkdown>
-                  {message.content}
-                </ReactMarkdown>
+                <ReactMarkdown>{message.content}</ReactMarkdown>
               </div>
             </div>
           ))
@@ -173,11 +179,14 @@ function ChatPage() {
               onClick={toggleSpeechRecognition}
               className={`p-2 rounded-lg ${
                 isListening
-                  ? 'bg-red-500 hover:bg-red-600'
-                  : 'bg-gray-700 hover:bg-gray-600'
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-gray-700 hover:bg-gray-600"
               } transition-colors`}
             >
-              <Mic size={20} className={isListening ? 'text-white' : 'text-gray-400'} />
+              <Mic
+                size={20}
+                className={isListening ? "text-white" : "text-gray-400"}
+              />
             </button>
             <button
               type="submit"

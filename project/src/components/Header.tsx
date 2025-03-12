@@ -1,6 +1,8 @@
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Stethoscope, BookOpen } from "lucide-react";
 
+import logo from "../../public/Screenshot_2025-03-12_175925-removebg-preview.png";
+
 interface HeaderProps {
   onNewChat: () => void;
   onHome: () => void;
@@ -16,7 +18,10 @@ function Header({ onNewChat, onHome }: HeaderProps) {
               onClick={onHome}
               className="flex items-center gap-2 hover:text-blue-400 transition-colors"
             >
-              <Stethoscope className="w-8 h-8 text-blue-500" />
+              <img
+                src={logo}
+                alt="Logo"
+                className="h-8 w-auto"/>
               <span className="text-xl font-bold">RPM.AI</span>
             </button>
 

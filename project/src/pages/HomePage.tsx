@@ -24,7 +24,7 @@ function HomePage({ onStartChat }: HomePageProps) {
         <div className="lg:h-auto max-w-7xl px-6 pb-24 sm:pb-3 lg:flex lg:py-4 z-50">
           <div className="mx-auto max-w-2xl flex-shrink-0 lg:mx-0 mt-5 lg:mt-0 pb-16 lg:max-w-xl lg:pt-8 lg:ml-20 pl-5 bg-gray-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100">
             <div className="mt-24 sm:mt-32 lg:mt-16">
-              <a href="#" className="inline-flex space-x-6">
+              <a href="https://github.com/sakshamagarwalm2" className="inline-flex space-x-6">
                 <span className="rounded-full bg-blue-500/10 px-3 py-1 text-sm font-semibold leading-6 text-blue-400 ring-1 ring-inset ring-blue-500/20">
                   Latest Update
                 </span>
@@ -48,7 +48,7 @@ function HomePage({ onStartChat }: HomePageProps) {
                 Start Learning Now
                 <ArrowRight className="h-4 w-4" />
               </button>
-              <a href="#features" className="text-sm font-semibold leading-6 text-white hover:text-blue-400">
+              <a href="https://github.com/sakshamagarwalm2" className="text-sm font-semibold leading-6 text-white hover:text-blue-400">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
